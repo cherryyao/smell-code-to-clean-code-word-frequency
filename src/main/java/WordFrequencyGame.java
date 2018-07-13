@@ -10,39 +10,45 @@ public class WordFrequencyGame {
             return inputStr + " 1";
         } else {
 
-            try {
+            //split the input string with 1 to n pieces of spaces
+            String[] arr = inputStr.split("\\s+");
 
-                //split the input string with 1 to n pieces of spaces
-                String[] arr = inputStr.split("\\s+");
+            List<Input> inputList = getInputs(arr);
 
-                List<Input> inputList = new ArrayList<>();
-                for (String s : arr) {
-                    Input input = new Input(s, 1);
-                    inputList.add(input);
-                }
+            //get the map for the next step of sizing the same word
+            List<Word> ModelList = sizing_the_same_word(inputList);
+            //inputList = list;
 
-                //get the map for the next step of sizing the same word
-                Map<String, List<Input>> map = getListMap(inputList);
+            ModelList.sort((w1, w2) -> w2.getCount() - w1.getCount());
 
-                List<Input> list = new ArrayList<>();
-                for (Map.Entry<String, List<Input>> entry : map.entrySet()) {
-                    Input input = new Input(entry.getKey(), entry.getValue().size());
-                    list.add(input);
-                }
-                inputList = list;
-
-                inputList.sort((w1, w2) -> w2.getWordCount() - w1.getWordCount());
-
-                StringJoiner joiner = new StringJoiner("\n");
-                for (Input w : inputList) {
-                    String s = w.getValue() + " " + w.getWordCount();
-                    joiner.add(s);
-                }
-                return joiner.toString();
-            } catch (Exception e) {
-                return "Calculate Error";
+            StringJoiner joiner = new StringJoiner("\n");
+            for (Word w : ModelList) {
+                String s = w.getValue() + " " + w.getCount();
+                joiner.add(s);
             }
+            return joiner.toString();
+
         }
+    }
+
+    private List<Word> sizing_the_same_word(List<Input> inputList) {
+        Map<String, List<Input>> map = getListMap(inputList);
+
+        List<Word> ModelList = new ArrayList<>();
+        for (Map.Entry<String, List<Input>> entry : map.entrySet()) {
+            Word input = new Word(entry.getKey(), entry.getValue().size());
+            ModelList.add(input);
+        }
+        return ModelList;
+    }
+
+    private List<Input> getInputs(String[] arr) {
+        List<Input> inputList = new ArrayList<>();
+        for (String s : arr) {
+            Input input = new Input(s);
+            inputList.add(input);
+        }
+        return inputList;
     }
 
     private Map<String, List<Input>> getListMap(List<Input> inputList) {
